@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	ant "github.com/fpiwowarczyk/ants-sim/Ant"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -35,6 +36,10 @@ func run() int {
 
 	running := true
 
+	var ants []*ant.Ant
+
+	ants = append(ants, ant.New(renderer))
+	period := 0
 	for running {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch event.(type) {
@@ -45,6 +50,17 @@ func run() int {
 
 		renderer.SetDrawColor(0, 0, 0, 255)
 		renderer.Clear()
+
+		for _, a := range ants {
+			a.Draw()
+			a.MoveRandomly()
+		}
+		if period == 1 {
+			fmt.Println("Ant added", len(ants))
+			ants = append(ants, ant.New(renderer))
+			period = 0
+		}
+		period++
 
 		renderer.Present()
 		sdl.Delay(16)
