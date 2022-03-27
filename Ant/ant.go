@@ -7,8 +7,7 @@ import (
 )
 
 type Ant struct {
-	x        int32
-	y        int32
+	Pos      *Coords
 	dir      int32
 	tick     int32
 	aperence *sdl.Rect
@@ -19,8 +18,7 @@ var WinWidth, WinHeight int32 = 1200, 800
 
 func New(x, y int32, renderer *sdl.Renderer) *Ant {
 	return &Ant{
-		x:        x,
-		y:        y,
+		Pos:      &Coords{X: x, Y: y},
 		dir:      rand.Int31n(4),
 		tick:     rand.Int31n(10),
 		renderer: renderer}
@@ -29,7 +27,7 @@ func New(x, y int32, renderer *sdl.Renderer) *Ant {
 func (ant *Ant) Draw() {
 	ant.tick++
 	ant.renderer.SetDrawColor(47, 249, 36, 255)
-	ant.renderer.FillRect(&sdl.Rect{W: 2, H: 5, X: ant.x, Y: ant.y})
+	ant.renderer.FillRect(&sdl.Rect{W: 2, H: 5, X: ant.Pos.X, Y: ant.Pos.Y})
 }
 
 func (ant *Ant) Move() {
@@ -50,23 +48,27 @@ func (ant *Ant) Move() {
 
 	switch ant.dir {
 	case 0:
-		ant.y -= 1
+		ant.Pos.Y -= 1
 	case 1:
-		ant.x += 1
+		ant.Pos.X += 1
 	case 2:
-		ant.y += 1
+		ant.Pos.Y += 1
 	case 3:
-		ant.x -= 1
+		ant.Pos.X -= 1
 	}
 
-	if ant.x >= 1210 {
-		ant.x = -5
-	} else if ant.x <= -10 {
-		ant.x = 1205
-	} else if ant.y <= -10 {
-		ant.y = 805
-	} else if ant.y >= 810 {
-		ant.y = -5
+	if ant.Pos.X >= 1200 {
+		ant.Pos.X = -5
+	} else if ant.Pos.X <= -10 {
+		ant.Pos.X = 1205
+	} else if ant.Pos.Y <= -10 {
+		ant.Pos.Y = 805
+	} else if ant.Pos.Y >= 810 {
+		ant.Pos.Y = -5
 	}
+
+}
+
+func borderSceen() {
 
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	nest "github.com/fpiwowarczyk/ants-sim/Nest"
+	g "github.com/fpiwowarczyk/ants-sim/Game"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -12,10 +12,10 @@ var Title string = "AntSim"
 var WinWidth, WinHeight int32 = 1200, 800
 
 func run() int {
-	var window *sdl.Window
+	var Window *sdl.Window
 	var renderer *sdl.Renderer
 
-	window, err := sdl.CreateWindow("Ant-sim",
+	Window, err := sdl.CreateWindow("Ant-sim",
 		sdl.WINDOWPOS_UNDEFINED,
 		sdl.WINDOWPOS_UNDEFINED,
 		WinWidth,
@@ -25,9 +25,9 @@ func run() int {
 		fmt.Fprintf(os.Stderr, "Failed to create renderer: %s\n", err)
 		return 1
 	}
-	defer window.Destroy()
+	defer Window.Destroy()
 
-	renderer, err = sdl.CreateRenderer(window, -1, sdl.RENDERER_ACCELERATED)
+	renderer, err = sdl.CreateRenderer(Window, -1, sdl.RENDERER_ACCELERATED)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create renderer: %s\n", err)
 		return 2
@@ -36,8 +36,7 @@ func run() int {
 
 	running := true
 
-	nest := nest.New(renderer)
-	nest.SpawnAnts(10)
+	game := g.New(renderer)
 
 	for running {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
@@ -49,7 +48,7 @@ func run() int {
 		renderer.SetDrawColor(0, 0, 0, 255)
 		renderer.Clear()
 
-		nest.Live()
+		game.Loop()
 
 		renderer.Present()
 		sdl.Delay(16)
