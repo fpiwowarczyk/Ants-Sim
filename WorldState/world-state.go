@@ -1,6 +1,7 @@
 package state
 
 import (
+	. "github.com/fpiwowarczyk/ants-sim/Common"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -10,22 +11,22 @@ const (
 )
 
 type Cell struct { // getContent
-	x       int32
-	y       int32
+	pos     *Coords
 	content []*string
 }
 
 type State struct { // GetContent(X,Y) UpdateContent(X,Y,content)
-	cells    []*Cell
+	cells    map[Coords]*Cell
 	renderer *sdl.Renderer
 }
 
 func New(windowHeight, windowWidth int, renderer *sdl.Renderer) *State {
-	var cells []*Cell
+	cells := make(map[Coords]*Cell)
 	var i, j int32
 	for i = 0; i < int32(windowWidth); i += cellWidth {
 		for j = 0; j < int32(windowHeight); j += cellHeight {
-			cells = append(cells, &Cell{x: i, y: j})
+			position := Coords{X: i, Y: j}
+			cells[position] = &Cell{pos: &position}
 		}
 
 	}
@@ -41,13 +42,7 @@ func (s *State) Draw() {
 func (s *State) UpdateCellContent(x, y int32, value string) {
 	x = (x / 10) * 10
 	y = (y / 10) * 10
-	for _, c := range s.cells {
-		if c.x == x && c.y == y {
-			c.content = append(c.content, &value)
-			return
-		}
-	}
-
+	s.cells[Coords{X: x, Y: y}].content = append(s.cells[Coords{X: x, Y: y}].content, &value)
 }
 
 func (c *Cell) Draw(renderer *sdl.Renderer) {
@@ -57,5 +52,5 @@ func (c *Cell) Draw(renderer *sdl.Renderer) {
 		renderer.SetDrawColor(200, 0, 0, 255)
 	}
 
-	renderer.DrawRect(&sdl.Rect{X: c.x, Y: c.y, W: cellWidth, H: cellHeight})
+	renderer.DrawRect(&sdl.Rect{X: c.pos.X, Y: c.pos.Y, W: cellWidth, H: cellHeight})
 }
