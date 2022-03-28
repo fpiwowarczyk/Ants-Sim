@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	g "github.com/fpiwowarczyk/ants-sim/Game"
+	game "github.com/fpiwowarczyk/ants-sim/Game"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -36,8 +36,7 @@ func run() int {
 
 	running := true
 
-	game := g.New(renderer)
-
+	game := game.Init(renderer)
 	for running {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch event.(type) {

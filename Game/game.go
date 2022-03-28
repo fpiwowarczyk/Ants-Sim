@@ -1,23 +1,30 @@
 package game
 
 import (
+	nest "github.com/fpiwowarczyk/ants-sim/Nest"
+	state "github.com/fpiwowarczyk/ants-sim/WorldState"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
+const (
+	WinWidth  = 1200
+	WinHeight = 1200
+)
+
 type Game struct {
-	Renderer *sdl.Renderer
-	State    *WorldState
+	WorldState *state.State
+	Nest       *nest.Nest
+	Renderer   *sdl.Renderer
 }
 
-func New(renderer *sdl.Renderer) *Game {
-	game := &Game{}
-	game.state.Nest = nest.New(renderer)
-	game.Renderer = renderer
-	game.Nest.SpawnAnts(10)
-
+func Init(renderer *sdl.Renderer) *Game {
+	state := state.New(WinHeight, WinWidth, renderer)
+	game := &Game{Renderer: renderer, Nest: nest.New(renderer, state), WorldState: state}
+	game.Nest.SpawnAnts(1)
 	return game
 }
 
 func (game *Game) Loop() {
+	game.WorldState.Draw()
 	game.Nest.Live()
 }

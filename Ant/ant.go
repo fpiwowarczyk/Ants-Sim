@@ -3,25 +3,29 @@ package ant
 import (
 	"math/rand"
 
+	. "github.com/fpiwowarczyk/ants-sim/Common"
+	state "github.com/fpiwowarczyk/ants-sim/WorldState"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-type Ant struct {
-	Pos      *Coords
-	dir      int32
-	tick     int32
-	aperence *sdl.Rect
-	renderer *sdl.Renderer
-}
-
 var WinWidth, WinHeight int32 = 1200, 800
 
-func New(x, y int32, renderer *sdl.Renderer) *Ant {
+type Ant struct {
+	Pos        *Coords
+	dir        int32
+	tick       int32
+	WorldState *state.State
+	aperence   *sdl.Rect
+	renderer   *sdl.Renderer
+}
+
+func New(x, y int32, WorldState *state.State, renderer *sdl.Renderer) *Ant {
 	return &Ant{
-		Pos:      &Coords{X: x, Y: y},
-		dir:      rand.Int31n(4),
-		tick:     rand.Int31n(10),
-		renderer: renderer}
+		Pos:        &Coords{X: x, Y: y},
+		dir:        rand.Int31n(4),
+		tick:       rand.Int31n(10),
+		WorldState: WorldState,
+		renderer:   renderer}
 }
 
 func (ant *Ant) Draw() {
@@ -34,7 +38,7 @@ func (ant *Ant) Move() {
 	if ant.tick < 25 {
 		ant.dir = 1
 	} else {
-		if ant.tick%5 == 0 {
+		if ant.tick%4 == 0 {
 			newDirection := rand.Int31n(3) - 1
 			ant.dir += newDirection
 			if ant.dir <= -1 {
@@ -67,8 +71,5 @@ func (ant *Ant) Move() {
 		ant.Pos.Y = -5
 	}
 
-}
-
-func borderSceen() {
-
+	ant.WorldState.UpdateCellContent(ant.Pos.X, ant.Pos.Y, "ant")
 }

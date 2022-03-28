@@ -3,6 +3,9 @@ package nest
 import (
 	"math/rand"
 
+	ant "github.com/fpiwowarczyk/ants-sim/Ant"
+	. "github.com/fpiwowarczyk/ants-sim/Common"
+	state "github.com/fpiwowarczyk/ants-sim/WorldState"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -13,14 +16,22 @@ const (
 	doorHeight = 20
 )
 
-func New(renderer *sdl.Renderer) *Nest {
+type Nest struct {
+	pos        *Coords
+	ants       []*ant.Ant
+	WorldState *state.State
+	renderer   *sdl.Renderer
+}
+
+func New(renderer *sdl.Renderer, WorldState *state.State) *Nest {
 	return &Nest{
-		pos:      &Coords{X: 300, Y: 200},
-		renderer: renderer}
+		pos:        &Coords{X: 300, Y: 200},
+		WorldState: WorldState,
+		renderer:   renderer}
 }
 
 func (nest *Nest) Live() {
-	for _, a := range game.Ants {
+	for _, a := range nest.ants {
 		a.Draw()
 		a.Move()
 	}
@@ -35,7 +46,9 @@ func (nest *Nest) draw() {
 }
 
 func (nest *Nest) SpawnAnts(value int) {
-	for i := 0; i <= value; i++ {
-		nest.Ants = append(nest.Ants, ant.New(nest.pos.X+width-doorWidth+rand.Int31n(10)-10, nest.pos.Y+height/2-doorHeight+25+rand.Int31n(10)-10, nest.renderer))
+	for i := 1; i <= value; i++ {
+		newX := nest.pos.X + width - doorWidth + rand.Int31n(10) - 10
+		newY := nest.pos.Y + height/2 - doorHeight + 25 + rand.Int31n(10) - 10
+		nest.ants = append(nest.ants, ant.New(newX, newY, nest.WorldState, nest.renderer))
 	}
 }
